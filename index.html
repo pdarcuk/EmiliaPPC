@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cipher Tool Homepage</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #e0f7fa, #f1f8e9);
+    }
+    .card {
+      background: white;
+      border: 1px solid #d1d5db;
+      border-radius: 1rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+      border-color: #3b82f6;
+    }
+  </style>
+</head>
+<body class="text-center p-10 text-gray-800">
+  <h1 class="text-4xl font-extrabold mb-10 tracking-tight">🔐 Cipher Tool Dashboard</h1>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 max-w-4xl mx-auto">
+    <a href="pigpen.html" class="card p-6">
+      <h2 class="text-2xl font-semibold mb-2">🔐 Pig Pen Symbol Mapper</h2>
+      <p class="text-gray-600">Click symbols from your homework and map them to letters.</p>
+    </a>
+
+    <a href="caesar_decoder_all.html" class="card p-6">
+      <h2 class="text-2xl font-semibold mb-2">🕵️ Caesar Cipher Decoder (All Shifts)</h2>
+      <p class="text-gray-600">Try all 25 shifts and view possible decoded messages.</p>
+    </a>
+
+    <a href="caesar_encoder.html" class="card p-6">
+      <h2 class="text-2xl font-semibold mb-2">🔏 Caesar Cipher Encoder</h2>
+      <p class="text-gray-600">Enter text and shift it forward to create a Caesar cipher.</p>
+    </a>
+
+    <a href="caesar_smart_decoder.html" class="card p-6">
+      <h2 class="text-2xl font-semibold mb-2">🧠 Caesar Cipher Smart Decoder</h2>
+      <p class="text-gray-600">Automatically guess the correct shift using letter patterns.</p>
+    </a>
+  </div>
+</body>
+</html>
