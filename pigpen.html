@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pig Pen Symbol Mapper</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #e0f2f1, #fce4ec);
+    }
+    .click-marker {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid blue;
+      background-color: rgba(0, 0, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: black;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="text-center p-4">
+  <h1 class="text-3xl font-bold mb-6">🔐 Pig Pen Symbol Mapper</h1>
+
+  <div class="mb-6">
+    <a href="index.html" class="text-blue-600 hover:underline">← Back to Homepage</a>
+  </div>
+
+  <input type="file" id="imageLoader" accept="image/*" class="mb-4" />
+  <div id="canvasWrapper" class="relative inline-block border border-gray-400">
+    <canvas id="imageCanvas" class="cursor-crosshair"></canvas>
+  </div>
+
+  <div class="mt-4 flex justify-center gap-4">
+    <button onclick="clearMarkers()" class="bg-red-500 text-white px-4 py-2 rounded">Clear All</button>
+  </div>
+
+  <div class="mt-6 text-left max-w-xl mx-auto">
+    <h2 class="text-xl font-semibold">Decoded Message:</h2>
+    <p id="decodedOutput" class="bg-white p-2 border mt-2 min-h-[50px]"></p>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('imageCanvas');
+    const ctx = canvas.getContext('2d');
+    const imageLoader = document.getElementById('imageLoader');
+    const canvasWrapper = document.getElementById('canvasWrapper');
+    const decodedOutput = document.getElementById('decodedOutput');
+    let image = new Image();
+
+    let markers = [];
+    let selectedMarkerIndex = null;
+
+    imageLoader.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file || !file.type.startsWith('image/')) {
+        alert('Please upload a valid image file.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        image.onload = () => {
+          canvas.width = image.width;
+          canvas.height = image.height;
+          ctx.drawImage(image, 0, 0);
+        };
+        image.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const div = document.createElement('div');
+      div.className = 'click-marker';
+      div.style.left = `${x - 12}px`;
+      div.style.top = `${y - 12}px`;
+      div.dataset.letter = '';
+
+      const label = document.createElement('span');
+      div.appendChild(label);
+
+      div.addEventListener('click', (event) => {
+        event.stopPropagation();
+        selectedMarkerIndex = markers.findIndex(m => m.element === div);
+      });
+
+      canvasWrapper.appendChild(div);
+      markers.push({ x, y, letter: '', element: div, label });
+      selectedMarkerIndex = markers.length - 1;
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (selectedMarkerIndex !== null && e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
+        const letter = e.key.toUpperCase();
+        const marker = markers[selectedMarkerIndex];
+        marker.letter = letter;
+        marker.element.dataset.letter = letter;
+        marker.label.textContent = letter;
+        updateDecodedMessage();
+      }
+      if (e.key === 'Backspace' && selectedMarkerIndex !== null) {
+        const marker = markers[selectedMarkerIndex];
+        marker.letter = '';
+        marker.element.dataset.letter = '';
+        marker.label.textContent = '';
+        updateDecodedMessage();
+      }
+    });
+
+    function updateDecodedMessage() {
+      const sortedMarkers = [...markers].sort((a, b) => {
+        const lineA = Math.floor(a.y / 50);
+        const lineB = Math.floor(b.y / 50);
+        if (lineA !== lineB) return lineA - lineB;
+        return a.x - b.x;
+      });
+      const message = sortedMarkers.map(m => m.letter || '_').join('');
+      decodedOutput.textContent = message;
+    }
+
+    function clearMarkers() {
+      markers.forEach(m => m.element.remove());
+      markers = [];
+      selectedMarkerIndex = null;
+      decodedOutput.textContent = '';
+    }
+  </script>
+</body>
+</html>
